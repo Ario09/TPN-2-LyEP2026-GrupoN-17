@@ -9,10 +9,8 @@ const Login = () => {
   const [password, setPassword] = useState('')
   const [sector, setSector] = useState('')
   const [errores, setErrores] = useState({})
-  const [cargando, setCargando] = useState(false) //H22
   const { setAdmin } = useAutorizaciones()
   const navigate = useNavigate()
-  const estiloError = { color: 'red', minHeight: '18px' }
   const validar = () => {
     const nuevosErrores = {}
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -38,25 +36,18 @@ const Login = () => {
     setErrores(nuevosErrores)
     return Object.keys(nuevosErrores).length === 0
   }
-
-  const manejarSubmit = async (e) => {
-  e.preventDefault()
-  if (!validar()) return
-
-  setCargando(true)
-
-  try {
+  const manejarSubmit = (e) => {
+    e.preventDefault()
+    if (!validar()) return
     const usuario = AutorizacionesService.login(
       email,
       password,
       sector
     )
     if (!usuario) {
-    // Se evita alert() nativo: bloquea la interacción y es inconsistente
-    // con el resto del formulario, que muestra sus errores en línea.
-      setErrores((prev) => ({ ...prev, credenciales: 'Email, contraseña o sector incorrectos' }))
-    return
-  }
+     alert('Verifique los datos')
+      return
+    }
     localStorage.setItem("role", usuario.sector)
     setAdmin({
       nombre: usuario.nombre,
@@ -64,22 +55,19 @@ const Login = () => {
       sector: usuario.sector
     })
     navigate('/')
-  }finally {
-    setCargando(false) // H22: siempre desactivar
   }
-}
   return (
     <div className="login-container">
       <h1>Iniciar Sesión</h1>
       <form onSubmit={manejarSubmit}>
         <label>Email:</label>
         <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <p style={estiloError}>
+        <p style={{ color: 'red', minHeight: '18px' }}>
           {errores.email || ' '}
         </p>
         <label>Contraseña:</label>
         <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-        <p style={estiloError}>
+        <p style={{ color: 'red', minHeight: '18px' }}>
           {errores.password || ' '}
         </p>
         <label>Sector:</label>
@@ -88,15 +76,10 @@ const Login = () => {
           <option value="Soporte">Soporte</option>
           <option value="Gerencia">Gerencia</option>
         </select>
-        <p style={estiloError}>
+        <p style={{ color: 'red', minHeight: '18px' }}>
           {errores.sector || ' '}
         </p>
-        <button type="submit" disabled={cargando}>
-        {cargando ? 'Ingresando...' : 'Ingresar'}
-        </button>
-        <p style={estiloError}>
-          {errores.credenciales || ' '}
-        </p>
+        <button type="submit">Ingresar</button>
       </form>
     </div>
   )

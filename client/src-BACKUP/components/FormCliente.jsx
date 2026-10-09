@@ -3,12 +3,6 @@ import { useState } from "react";
 import { Form, Button, Alert, Spinner } from "react-bootstrap";
 import clientesService from "../services/clientesService";
 
-const LONGITUD_PASSWORD = 10;
-
-const generarPasswordTemporal = () => {
-    return Math.random().toString(36).slice(-LONGITUD_PASSWORD);
-};
-
 const FormCliente = () => {
 
     const [nombre, setNombre] = useState("");
@@ -39,19 +33,25 @@ const FormCliente = () => {
             return;
         }
 
-       const nuevoCliente = {
-    email,
-    username: nombre.toLowerCase().replace(/\s/g, ""),
-    password: generarPasswordTemporal(),
-    name: {
-        firstname: nombre,
-        lastname: "-"
-    },
-    address: {
-        city: ciudad
-    },
-    phone: telefono
-};
+        const nuevoCliente = {
+
+            email,
+
+            username: nombre.toLowerCase().replace(/\s/g, ""),
+
+            password: "1234",
+
+            name: {
+                firstname: nombre,
+                lastname: "-"
+            },
+
+            address: {
+                city: ciudad
+            },
+
+            phone: telefono
+        };
 
         try {
 
