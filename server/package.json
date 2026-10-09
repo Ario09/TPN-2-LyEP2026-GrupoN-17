@@ -1,4 +1,15 @@
 {
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Backend del Panel de Control de Clientes - TP02 LyEP 2026 Grupo 17",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "Angelo Rosario",
+  "license": "MIT",
   "dependencies": {
     "cors": "^2.8.6",
     "dotenv": "^18.0.6",
