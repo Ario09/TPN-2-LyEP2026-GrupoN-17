@@ -2,6 +2,7 @@ import "../css/listaclientes.css"
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import FormCliente from "../components/FormCliente";
+import clientesService from "../services/clientesService";
 
 const ListaClientes = () => {
   const [clientes, setClientes] = useState([]);
@@ -10,33 +11,28 @@ const ListaClientes = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
- useEffect(() => {
-  let isMounted = true;
+   useEffect(() => {
+    let isMounted = true;
 
-  fetch("https://fakestoreapi.com/users")
-    .then((res) => {
-      if (!res.ok) {
-        throw new Error("Error al obtener clientes");
-      }
-      return res.json();
-    })
-    .then((data) => {
-      if (isMounted) {
-        setClientes(data);
-        setLoading(false);
-      }
-    })
-    .catch(() => {
-      if (isMounted) {
-        setError(true);
-        setLoading(false);
-      }
-    });
+    clientesService
+      .obtenerClientes()
+      .then((data) => {
+        if (isMounted) {
+          setClientes(data);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setError(true);
+          setLoading(false);
+        }
+      });
 
-  return () => {
-    isMounted = false;
-  };
-}, []);
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
   const timer = setTimeout(() => {
