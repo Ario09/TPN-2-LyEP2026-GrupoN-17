@@ -16,6 +16,8 @@ connectDB();
 app.get('/', (req, res) => {
   res.json({ mensaje: 'Backend CotizaNOA funcionando' });
 });
+// Rutas de la API de clientes
+app.use('/api/clientes', require('./routes/clienteRoutes'));
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
