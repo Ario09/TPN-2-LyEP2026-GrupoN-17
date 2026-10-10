@@ -1,0 +1,100 @@
+import '../css/detallecliente.css'
+import { useParams, useNavigate } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { AutorizacionesContext } from "../context/AutorizacionesContext";
+import clientesService from "../services/clientesService";
+const PASSWORD_MASK = '••••••••';
+ 
+const DetalleCliente = () => {
+ const { id } = useParams();
+  const navigate = useNavigate();
+  // H02 (issue #7): rol obtenido desde AutorizacionesContext, ya no desde localStorage
+     const { admin } = useContext(AutorizacionesContext);
+     const role = admin?.sector;
+     const esGerencia = role === "Gerencia";
+ 
+  const [cliente, setCliente] = useState(null);
+  const [mensaje, setMensaje] = useState("");
+
+    useEffect(() => {
+    clientesService.obtenerClientePorId(id).then((data) => setCliente(data));
+  }, [id]);
+ 
+  const eliminarCliente = async () => {
+    try {
+      await clientesService.eliminarCliente(id);
+      setMensaje("Cliente eliminado correctamente");
+
+      setTimeout(() => {
+        navigate("/clientes");
+      }, 2000);
+    } catch (error) {
+      setMensaje("Error al eliminar cliente");
+    }
+  };
+  if (!cliente) {
+    return <h2>Cargando cliente...</h2>;
+  }
+
+  return (
+    <div className="detalle-cliente">
+      <h1>Ficha del Cliente</h1>
+      <p>Rol actual: {role}</p>
+
+      {mensaje && <p className = 'mensaje-eliminado'>{mensaje}</p>}
+
+      <p>
+        <strong>ID:</strong> {cliente.id}
+      </p>
+
+      <p>
+        <strong>Nombre:</strong>{" "}
+        {cliente.name.firstname} {cliente.name.lastname}
+      </p>
+
+      <p>
+        <strong>Email:</strong> {cliente.email}
+      </p>
+
+      <p>
+        <strong>Teléfono:</strong> {cliente.phone}
+      </p>
+
+      <h2>Dirección</h2>
+
+      <p>
+        <strong>Calle:</strong> {cliente.address.street}
+      </p>
+
+      <p>
+        <strong>Número:</strong> {cliente.address.number}
+      </p>
+
+      <p>
+        <strong>Código Postal:</strong> {cliente.address.zipcode}
+      </p>
+
+      <p>
+        <strong>Ciudad:</strong> {cliente.address.city}
+      </p>
+{/* Fix #1 (H03): no renderizar cliente.password en texto plano */}
+      <h2>Credenciales</h2>
+
+      <p>
+        <strong>Usuario:</strong> {cliente.username}
+      </p>
+
+      <p>
+        <strong>Contraseña:</strong> <span className="password-mask">{PASSWORD_MASK}</span>
+      </p>
+     
+{esGerencia && (
+        <button className='btn-eliminar'onClick={eliminarCliente}>
+          Eliminar Cliente
+        </button>
+      )}
+    </div>
+  );
+};
+
+export default DetalleCliente;

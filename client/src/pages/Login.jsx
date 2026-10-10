@@ -1,0 +1,104 @@
+import '../css/login.css'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import useAutorizaciones from '../hooks/useAutorizaciones'
+import AutorizacionesService from '../services/autorizacionesServices'
+
+const Login = () => {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [sector, setSector] = useState('')
+  const [errores, setErrores] = useState({})
+  const [cargando, setCargando] = useState(false) //H22
+  const { setAdmin } = useAutorizaciones()
+  const navigate = useNavigate()
+  const estiloError = { color: 'red', minHeight: '18px' }
+  const validar = () => {
+    const nuevosErrores = {}
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!email) {
+      nuevosErrores.email = 'El email es obligatorio'
+    } else if (!emailRegex.test(email)) {
+      nuevosErrores.email = 'Email inválido'
+    }
+    if (!password) {
+      nuevosErrores.password = 'La contraseña es obligatoria'
+    } else {
+      if (password.length < 8) {
+        nuevosErrores.password = 'Mínimo 8 caracteres'
+      } else if (!/[A-Z]/.test(password)) {
+        nuevosErrores.password = 'Debe tener una mayúscula'
+      } else if (!/[0-9]/.test(password)) {
+        nuevosErrores.password = 'Debe tener un número'
+      }
+    }
+    if (!sector) {
+      nuevosErrores.sector = 'Seleccione un sector'
+    }
+    setErrores(nuevosErrores)
+    return Object.keys(nuevosErrores).length === 0
+  }
+
+  const manejarSubmit = async (e) => {
+  e.preventDefault()
+  if (!validar()) return
+
+  setCargando(true)
+
+  try {
+    const usuario = AutorizacionesService.login(
+      email,
+      password,
+      sector
+    )
+    if (!usuario) {
+    // Se evita alert() nativo: bloquea la interacción y es inconsistente
+    // con el resto del formulario, que muestra sus errores en línea.
+      setErrores((prev) => ({ ...prev, credenciales: 'Email, contraseña o sector incorrectos' }))
+    return
+  }
+    localStorage.setItem("role", usuario.sector)
+    setAdmin({
+      nombre: usuario.nombre,
+      email: usuario.email,
+      sector: usuario.sector
+    })
+    navigate('/')
+  }finally {
+    setCargando(false) // H22: siempre desactivar
+  }
+}
+  return (
+    <div className="login-container">
+      <h1>Iniciar Sesión</h1>
+      <form onSubmit={manejarSubmit}>
+        <label>Email:</label>
+        <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
+        <p style={estiloError}>
+          {errores.email || ' '}
+        </p>
+        <label>Contraseña:</label>
+        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <p style={estiloError}>
+          {errores.password || ' '}
+        </p>
+        <label>Sector:</label>
+        <select value={sector} onChange={(e) => setSector(e.target.value)}>
+          <option value="">Seleccione un sector</option>
+          <option value="Soporte">Soporte</option>
+          <option value="Gerencia">Gerencia</option>
+        </select>
+        <p style={estiloError}>
+          {errores.sector || ' '}
+        </p>
+        <button type="submit" disabled={cargando}>
+        {cargando ? 'Ingresando...' : 'Ingresar'}
+        </button>
+        <p style={estiloError}>
+          {errores.credenciales || ' '}
+        </p>
+      </form>
+    </div>
+  )
+}
+export default Login
