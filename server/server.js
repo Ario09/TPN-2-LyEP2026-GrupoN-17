@@ -14,7 +14,7 @@ connectDB();
 
 // Ruta de prueba
 app.get('/', (req, res) => {
-  res.json({ mensaje: 'Backend CotizaNOA funcionando' });
+  res.json({ mensaje: 'Backend Panel de Control de Clientes funcionando' });
 });
 
 const PORT = process.env.PORT || 3001;

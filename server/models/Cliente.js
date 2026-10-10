@@ -7,7 +7,10 @@ const ClienteSchema = new mongoose.Schema({
     lastname: { type: String, required: true, trim: true }
   },
   address: {
-    city: { type: String, trim: true }
+    street: { type: String, trim: true },
+    number: { type: String, trim: true },
+    city: { type: String, trim: true },
+    zipcode: { type: String, trim: true }
   },
   phone: { type: String, trim: true },
   username: { type: String, required: true, unique: true, trim: true, lowercase: true },

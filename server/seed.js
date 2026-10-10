@@ -10,6 +10,10 @@ const seed = async () => {
   try {
     await connectDB();
 
+    console.log('⚠️  ADVERTENCIA: Este script borrará TODOS los datos de las colecciones.');
+    console.log('   Presioná Ctrl+C para cancelar. Continuando en 5 segundos...');
+    await new Promise(resolve => setTimeout(resolve, 5000));
+
     console.log('🗑️  Limpiando colecciones...');
     await Empresa.deleteMany();
     await Usuario.deleteMany();
@@ -36,7 +40,7 @@ const seed = async () => {
     await Cliente.create([
       {
         name: { firstname: 'Juan', lastname: 'Pérez' },
-        address: { city: 'Salta' },
+        address: { street: 'Av. Belgrano', number: '123', city: 'Salta', zipcode: '4400' },
         phone: '3874001001',
         username: 'juanperez',
         email: 'juan@test.com',
@@ -45,7 +49,7 @@ const seed = async () => {
       },
       {
         name: { firstname: 'María', lastname: 'López' },
-        address: { city: 'Jujuy' },
+        address: { street: 'San Martín', number: '456', city: 'Jujuy', zipcode: '4600' },
         phone: '3884002002',
         username: 'marialopez',
         email: 'maria@test.com',
@@ -54,7 +58,7 @@ const seed = async () => {
       },
       {
         name: { firstname: 'Carlos', lastname: 'Gómez' },
-        address: { city: 'Tucumán' },
+        address: { street: 'Rivadavia', number: '789', city: 'Tucumán', zipcode: '4000' },
         phone: '3814003003',
         username: 'carlosgomez',
         email: 'carlos@test.com',
