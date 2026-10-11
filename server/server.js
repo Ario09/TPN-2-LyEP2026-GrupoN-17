@@ -5,8 +5,8 @@ const connectDB = require('./config/db');
 
 const app = express();
 
-// CORS configurado para el frontend en localhost:5173
-app.use(cors({ origin: 'http://localhost:5173' }));
+// CORS: en local usa el frontend de Vite; en producción, la URL definida en CLIENT_URL
+app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173' }));
 app.use(express.json());
 
 // Conectar a MongoDB
